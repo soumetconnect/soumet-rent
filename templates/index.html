@@ -4,38 +4,44 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rent Manager</title>
     <style>
-        body { font-family: sans-serif; padding: 20px; background: #f4f4f9; }
-        .card { background: #fff; padding: 20px; margin-bottom: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        input, select, button { width: 100%; padding: 15px; margin: 10px 0; font-size: 1.2rem; display: block; }
-        .record { border-bottom: 1px solid #ccc; padding: 10px 0; }
+        body { font-family: 'Segoe UI', sans-serif; background: linear-gradient(135deg, #74ebd5, #9face6); padding: 10px; min-height: 100vh; }
+        .card { background: rgba(255, 255, 255, 0.9); padding: 15px; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); margin-bottom: 20px; }
+        h1 { color: #fff; text-align: center; text-shadow: 2px 2px 4px rgba(0,0,0,0.3); }
+        input, select, button { width: 100%; padding: 12px; margin: 6px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { background: #27ae60; color: white; border: none; font-weight: bold; }
+        .table-container { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+        th { background: #2c3e50; color: white; padding: 10px; }
+        td { border: 1px solid #ddd; padding: 8px; background: #fff; }
     </style>
 </head>
 <body>
     <h1>Rent Manager</h1>
     <div class="card">
         <form action="/add" method="POST">
-            <input type="text" name="name" placeholder="Tenant Name" required>
+            <input type="text" name="name" placeholder="Name" required>
             <input type="text" name="phone" placeholder="Phone" required>
             <input type="text" name="loc" placeholder="Location" required>
             <input type="text" name="town" placeholder="Town" required>
+            <input type="text" name="apt_no" placeholder="Apt No" required>
             <input type="text" name="type" placeholder="Apt Type" required>
             <input type="number" name="total" placeholder="Total Rent" required>
             <input type="number" name="paid" placeholder="Amount Paid" required>
-            <input type="date" name="move" required>
-            <input type="date" name="exp" required>
+            <select name="sec_dep"><option value="Yes">Sec Dep: Yes</option><option value="No">Sec Dep: No</option></select>
+            <select name="status"><option value="Full">Full</option><option value="Partial">Partial</option></select>
+            <label>Payment Date</label><input type="date" name="pay_date" required>
+            <label>Next Payment Date</label><input type="date" name="next_due" required>
             <button type="submit">Add Tenant</button>
         </form>
     </div>
-    <div class="card">
+    <div class="card table-container">
         <h3>Database Records</h3>
-        {% for t in tenants %}
-        <div class="record">
-            <strong>{{ t.name }}</strong><br>
-            Loc: {{ t.building_loc }}<br>
-            Type: {{ t.apt_type }}<br>
-            Bal: {{ t.outstanding_balance }}
-        </div>
-        {% endfor %}
+        <table>
+            <tr><th>Name</th><th>Bal</th><th>Status</th><th>Next Due</th></tr>
+            {% for t in tenants %}
+            <tr><td>{{ t.name }}</td><td>{{ t.outstanding }}</td><td>{{ t.status }}</td><td>{{ t.next_due }}</td></tr>
+            {% endfor %}
+        </table>
     </div>
 </body>
 </html>
