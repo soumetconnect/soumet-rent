@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html>
+<body style="font-family: sans-serif; padding: 20px;">
+    <h2>Payment Receipt</h2>
+    <p><strong>Tenant:</strong> {{ t.name }}</p>
+    <p><strong>Property:</strong> {{ t.building_loc }}, {{ t.town }}</p>
+    <p><strong>Amount Paid:</strong> {{ t.amount_paid }}</p>
+    <p><strong>Outstanding:</strong> {{ t.outstanding }}</p>
+    <button onclick="window.print()">Print Receipt</button>
+</body>
+</html>
