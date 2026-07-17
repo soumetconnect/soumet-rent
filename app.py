@@ -1,11 +1,14 @@
 from flask import Flask, render_template, request, redirect, url_for
 from flask_sqlalchemy import SQLAlchemy
+import os
 from datetime import datetime
 
 app = Flask(__name__)
-# Render will automatically handle the file path
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rent_tracker.db'
+# Use an absolute path for the database in the current directory
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'rent_tracker.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
 db = SQLAlchemy(app)
 
 class Tenant(db.Model):
@@ -20,9 +23,9 @@ class Tenant(db.Model):
     move_in_date = db.Column(db.Date)
     expiry_date = db.Column(db.Date)
 
-    @property
-    def outstanding(self):
-        return self.rent_total - self.amount_paid
+# Create tables immediately upon app start
+with app.app_context():
+    db.create_all()
 
 @app.route('/')
 def index():
@@ -48,6 +51,4 @@ def receipt(id):
     return render_template('receipt.html', t=t)
 
 if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
     app.run()
