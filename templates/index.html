@@ -1,40 +1,36 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Soumet Rent Tracker</title>
     <style>
-        body { font-family: sans-serif; background: #f1f5f9; padding: 10px; }
-        .header { background: linear-gradient(135deg, #4f46e5, #06b6d4); color: white; padding: 10px; text-align: center; border-radius: 8px; margin-bottom: 10px; }
-        .card { background: white; padding: 10px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .label { font-size: 10px; font-weight: bold; color: #0369a1; display: block; margin-bottom: 2px; }
-        input, select { width: 100%; padding: 6px; font-size: 12px; border: 1px solid #cbd5e1; border-radius: 4px; box-sizing: border-box; }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; }
-        button { background: #0f172a; color: white; padding: 8px; border-radius: 4px; border: none; width: 100%; margin-top: 10px; font-size: 12px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 11px; }
-        th { background: #3b82f6; color: white; padding: 8px; border: 1px solid #2563eb; }
-        td { background: #fefce8; padding: 6px; border: 1px solid #fde68a; }
+        body { font-family: sans-serif; padding: 20px; background: #f4f4f9; color: #333; }
+        h1 { font-size: 2.5rem; text-align: center; }
+        .card { background: #fff; padding: 20px; margin: 15px 0; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        input, button { width: 100%; padding: 15px; margin: 10px 0; font-size: 1.2rem; border-radius: 10px; border: 1px solid #ccc; }
+        button { background: #2c3e50; color: white; font-weight: bold; }
+        .balance { font-size: 1.5rem; color: #c0392b; font-weight: bold; }
     </style>
 </head>
 <body>
-    <div class="header">Elebe Rent Management</div>
+    <h1>Rent Manager</h1>
     <div class="card">
-        <form method="POST" action="/add" class="form-grid">
-            <div style="grid-column: span 2;"><span class="label">TENANT NAME</span><input name="name" required></div>
-            <div><span class="label">PHONE</span><input name="phone" required></div>
-            <div><span class="label">LOCATION</span><input name="loc" required></div>
-            <div><span class="label">TOWN</span><input name="town" required></div>
-            <div><span class="label">APT TYPE</span><select name="type"><option>One Room</option><option>Two Rooms</option><option>2 BR Flat</option><option>3 BR Flat</option></select></div>
-            <div><span class="label">TOTAL RENT</span><input name="total" type="number" required></div>
-            <div><span class="label">AMOUNT PAID</span><input name="paid" type="number" required></div>
-            <div><span class="label">DATE PARKED IN</span><input name="move" type="date" required></div>
-            <div><span class="label">RENT EXPIRY DATE</span><input name="exp" type="date" required></div>
-            <button type="submit" style="grid-column: span 2;">Add Tenant</button>
+        <form action="/add" method="POST">
+            <input type="text" name="name" placeholder="Tenant Name" required>
+            <input type="number" name="total" placeholder="Total Rent" required>
+            <input type="number" name="paid" placeholder="Amount Paid" required>
+            <input type="date" name="move" required>
+            <input type="date" name="exp" required>
+            <button type="submit">Add Tenant</button>
         </form>
     </div>
-    <table>
-        <tr><th>Name</th><th>Loc</th><th>Type</th><th>Total</th><th>Paid</th><th>Bal</th><th>Print</th></tr>
-        {% for t in tenants %}
-        <tr><td>{{ t.name }}</td><td>{{ t.building_loc }}</td><td>{{ t.apt_type }}</td><td>{{ t.rent_total }}</td><td>{{ t.amount_paid }}</td><td>{{ t.outstanding }}</td><td><a href="/receipt/{{ t.id }}">🖨️</a></td></tr>
-        {% endfor %}
-    </table>
+    {% for t in tenants %}
+    <div class="card">
+        <h2>{{ t.name }}</h2>
+        <p>Rent: {{ t.rent_total }} | Paid: {{ t.amount_paid }}</p>
+        <p class="balance">Balance: {{ t.outstanding_balance }}</p>
+        <a href="/receipt/{{ t.id }}">View Receipt</a>
+    </div>
+    {% endfor %}
 </body>
 </html>

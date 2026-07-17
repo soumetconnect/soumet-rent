@@ -4,7 +4,6 @@ import os
 from datetime import datetime
 
 app = Flask(__name__)
-# Use an absolute path for the database in the current directory
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'rent_tracker.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -23,7 +22,10 @@ class Tenant(db.Model):
     move_in_date = db.Column(db.Date)
     expiry_date = db.Column(db.Date)
 
-# Create tables immediately upon app start
+    @property
+    def outstanding_balance(self):
+        return self.rent_total - self.amount_paid
+
 with app.app_context():
     db.create_all()
 
