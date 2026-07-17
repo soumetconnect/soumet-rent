@@ -2,14 +2,12 @@
 <html>
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Soumet Rent Tracker</title>
+    <title>Rent Manager</title>
     <style>
-        body { font-family: sans-serif; padding: 20px; background: #f4f4f9; color: #333; }
-        h1 { font-size: 2.5rem; text-align: center; }
-        .card { background: #fff; padding: 20px; margin: 15px 0; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        input, button { width: 100%; padding: 15px; margin: 10px 0; font-size: 1.2rem; border-radius: 10px; border: 1px solid #ccc; }
-        button { background: #2c3e50; color: white; font-weight: bold; }
-        .balance { font-size: 1.5rem; color: #c0392b; font-weight: bold; }
+        body { font-family: sans-serif; padding: 20px; background: #f4f4f9; }
+        .card { background: #fff; padding: 20px; margin-bottom: 20px; border-radius: 15px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        input, select, button { width: 100%; padding: 15px; margin: 10px 0; font-size: 1.2rem; display: block; }
+        .record { border-bottom: 1px solid #ccc; padding: 10px 0; }
     </style>
 </head>
 <body>
@@ -17,6 +15,10 @@
     <div class="card">
         <form action="/add" method="POST">
             <input type="text" name="name" placeholder="Tenant Name" required>
+            <input type="text" name="phone" placeholder="Phone" required>
+            <input type="text" name="loc" placeholder="Location" required>
+            <input type="text" name="town" placeholder="Town" required>
+            <input type="text" name="type" placeholder="Apt Type" required>
             <input type="number" name="total" placeholder="Total Rent" required>
             <input type="number" name="paid" placeholder="Amount Paid" required>
             <input type="date" name="move" required>
@@ -24,13 +26,16 @@
             <button type="submit">Add Tenant</button>
         </form>
     </div>
-    {% for t in tenants %}
     <div class="card">
-        <h2>{{ t.name }}</h2>
-        <p>Rent: {{ t.rent_total }} | Paid: {{ t.amount_paid }}</p>
-        <p class="balance">Balance: {{ t.outstanding_balance }}</p>
-        <a href="/receipt/{{ t.id }}">View Receipt</a>
+        <h3>Database Records</h3>
+        {% for t in tenants %}
+        <div class="record">
+            <strong>{{ t.name }}</strong><br>
+            Loc: {{ t.building_loc }}<br>
+            Type: {{ t.apt_type }}<br>
+            Bal: {{ t.outstanding_balance }}
+        </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </body>
 </html>

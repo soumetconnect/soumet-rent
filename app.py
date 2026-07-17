@@ -4,6 +4,7 @@ import os
 from datetime import datetime
 
 app = Flask(__name__)
+# Use a persistent path if possible, or ensure it recreates
 basedir = os.path.abspath(os.path.dirname(__file__))
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///' + os.path.join(basedir, 'rent_tracker.db')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
@@ -24,33 +25,34 @@ class Tenant(db.Model):
 
     @property
     def outstanding_balance(self):
-        return self.rent_total - self.amount_paid
+        return (self.rent_total or 0) - (self.amount_paid or 0)
 
 with app.app_context():
     db.create_all()
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
     return render_template('index.html', tenants=Tenant.query.all())
 
 @app.route('/add', methods=['POST'])
 def add():
-    t = Tenant(
-        name=request.form['name'], phone=request.form['phone'],
-        building_loc=request.form['loc'], town=request.form['town'],
-        apt_type=request.form['type'], rent_total=float(request.form['total']),
-        amount_paid=float(request.form['paid']),
-        move_in_date=datetime.strptime(request.form['move'], '%Y-%m-%d'),
-        expiry_date=datetime.strptime(request.form['exp'], '%Y-%m-%d')
-    )
+    # Use .get() to prevent 'Bad Request' if a field is missing
+    name = request.form.get('name')
+    phone = request.form.get('phone')
+    loc = request.form.get('loc')
+    town = request.form.get('town')
+    apt_type = request.form.get('type')
+    total = float(request.form.get('total', 0))
+    paid = float(request.form.get('paid', 0))
+    move = datetime.strptime(request.form.get('move'), '%Y-%m-%d')
+    exp = datetime.strptime(request.form.get('exp'), '%Y-%m-%d')
+    
+    t = Tenant(name=name, phone=phone, building_loc=loc, town=town, 
+               apt_type=apt_type, rent_total=total, amount_paid=paid, 
+               move_in_date=move, expiry_date=exp)
     db.session.add(t)
     db.session.commit()
     return redirect(url_for('index'))
-
-@app.route('/receipt/<int:id>')
-def receipt(id):
-    t = Tenant.query.get_or_404(id)
-    return render_template('receipt.html', t=t)
 
 if __name__ == '__main__':
     app.run()
