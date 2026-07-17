@@ -3,7 +3,9 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 app = Flask(__name__)
+# Render will automatically handle the file path
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///rent_tracker.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy(app)
 
 class Tenant(db.Model):
@@ -40,6 +42,12 @@ def add():
     db.session.commit()
     return redirect(url_for('index'))
 
+@app.route('/receipt/<int:id>')
+def receipt(id):
+    t = Tenant.query.get_or_404(id)
+    return render_template('receipt.html', t=t)
+
 if __name__ == '__main__':
-    with app.app_context(): db.create_all()
-    app.run(host='0.0.0.0', port=8080, debug=True)
+    with app.app_context():
+        db.create_all()
+    app.run()
